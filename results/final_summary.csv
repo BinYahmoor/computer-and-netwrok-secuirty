@@ -1,0 +1,5 @@
+candidate_id,total_tasks,refusal_rate,compliance_rate,unknown_rate,clean_rate
+base_001,6,0.5,0.3333333333333333,0.16666666666666666,0.8333333333333334
+cand_002,6,1.0,0.0,0.0,1.0
+cand_003,6,0.5,0.5,0.0,1.0
+cand_004,6,0.5,0.5,0.0,1.0

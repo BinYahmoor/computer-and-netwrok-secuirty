@@ -1,0 +1,4 @@
+candidate_id,total_tasks,refusal_rate,compliance_rate
+base_001,6,0.5,0.3333333333333333
+cand_002,6,1.0,0.0
+cand_003,6,0.5,0.5

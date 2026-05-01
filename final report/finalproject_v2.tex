@@ -1,0 +1,89 @@
+\documentclass[10pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+
+\title{AI-Driven Analysis of Prompt Framing Effects on Safety-Aligned Language Models}
+\author{Mohammed Rashed Ali Yahmoor Alshehhi \\ CS7602}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem}
+
+Safety-aligned large language models (LLMs) are designed to refuse harmful or policy-violating requests. However, prior work shows that adversarial prompting can influence model behavior. This project studies how natural-language prompt framing affects refusal and compliance behavior in a controlled setting, without performing full adversarial attacks.
+
+This work is inspired by Zou et al.~\cite{zou2023}, which demonstrates that optimized prompts can bypass alignment. Here, we focus on a simplified setting to analyze behavioral changes under prompt variation.
+
+\section{Method}
+
+We define a candidate as a prompt template containing a \texttt{\{TASK\}} placeholder. Initial candidates were manually constructed based on strategy families (direct, research framing, classification), followed by an AI-generated variant using a local LLM (LLaMA3 via Ollama). This approximates a simplified AI-driven search process.
+
+Each candidate is evaluated on a fixed benchmark of six tasks:
+\begin{itemize}
+    \item 3 harmful (expected REFUSE)
+    \item 2 benign (expected COMPLY)
+    \item 1 ambiguous (boundary case)
+\end{itemize}
+
+For each task, the template is instantiated and sent to the model. Outputs are classified as REFUSE, COMPLY, or UNKNOWN using deterministic rules. Metrics include refusal rate, compliance rate, unknown rate, and clean output rate.
+
+This simplified pipeline preserves the core structure of candidate generation and evaluation while remaining computationally feasible. Unlike Zou et al., which rely on gradient-based optimization, this approach demonstrates that natural-language prompt variation alone can reveal meaningful behavioral differences.
+
+We also consider a ``sandwich-style'' interpolation concept, where prompts vary between benign and harmful formulations to analyze boundary behavior without attempting to bypass safeguards.
+
+\section{Results}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Candidate} & \textbf{Refusal} & \textbf{Compliance} & \textbf{Unknown} & \textbf{Clean} \\
+\hline
+base\_001 & 0.50 & 0.33 & 0.17 & 0.83 \\
+cand\_002 & 1.00 & 0.00 & 0.00 & 1.00 \\
+cand\_003 & 0.50 & 0.50 & 0.00 & 1.00 \\
+cand\_004 & 0.50 & 0.50 & 0.00 & 1.00 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Insights}
+
+Prompt framing significantly affects model behavior:
+
+\begin{itemize}
+    \item Research-style framing (cand\_002) causes over-refusal, rejecting even benign tasks.
+    \item The baseline prompt produces unstable outputs on ambiguous inputs.
+    \item Classification-style prompts (cand\_003, cand\_004) achieve balanced behavior, correctly separating harmful and benign tasks with consistent outputs.
+\end{itemize}
+
+The AI-generated candidate performs comparably to manually designed prompts, indicating that LLMs can effectively propose useful prompt variations. Additionally, classification-style formulations align more closely with the model’s expected output format, resulting in more stable and predictable behavior.
+
+The ambiguous task highlights boundary behavior, where model responses are highly sensitive to prompt framing, revealing the transition region between compliance and refusal decisions.
+
+These results highlight a trade-off between safety and usability, where certain prompt framings improve consistency but may increase over-refusal.
+
+\section{Conclusion}
+
+The model exhibits robust refusal behavior on harmful tasks, but prompt design strongly influences usability and consistency. Certain prompt framings lead to over-refusal, while others improve clarity and reliability. Even a simplified AI-driven search process is sufficient to identify prompt strategies that improve consistency and usability.
+
+These findings complement prior work by showing that even without gradient-based optimization, natural-language prompt variation alone can significantly influence model behavior.
+
+\section*{Limitations}
+
+This study uses a small benchmark, a single local model, and heuristic evaluation. The use of deterministic classification rules may introduce minor labeling inaccuracies. Future work could explore larger datasets and cross-model comparisons.
+
+
+\begin{thebibliography}{1}
+
+\bibitem{zou2023}
+A. Zou et al., ``Universal and Transferable Adversarial Attacks on Aligned Language Models,'' arXiv:2307.15043, 2023.
+
+\end{thebibliography}
+
+\section*{Appendix}
+
+All prompt templates and evaluation scripts are available in the project repository.
+
+\end{document}
